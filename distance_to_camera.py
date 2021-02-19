@@ -1,5 +1,4 @@
-# Most of this was from Adrian Rosebrocks post on pyimagesearch to figure out
-# the focal distance of my MacBook Pro's camera https://bit.ly/2KJVoKC
+# Most of this was from Adrian Rosebrocks post on pyimagesearch
 
 # import the necessary packages
 from imutils import paths
