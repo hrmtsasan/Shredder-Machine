@@ -6,7 +6,7 @@ from imutils.video import VideoStream
 from utils import detector_utils as detector_utils
 import pandas as pd
 from datetime import date
-import xlrd                    ## We are trying to save this report into excel sheet as well. That's why we r calling xlrd.
+import xlrd                   
 from xlwt import Workbook
 from xlutils.copy import copy 
 import numpy as np
@@ -18,14 +18,12 @@ ap.add_argument('-d', '--display', dest='display', type=int,
                         default=1, help='Display the detected images using OpenCV. This reduces FPS')
 args = vars(ap.parse_args())
 
-detection_graph, sess = detector_utils.load_inference_graph()       ## This will be the starting point. Here graph will be loaded in the particular session.
+detection_graph, sess = detector_utils.load_inference_graph()      
 
 def save_data(no_of_time_hand_detected, no_of_time_hand_crossed):
 
     try:   
         today = date.today()
-        today=str(today)
-        #loc = (r'C:\Users\rahul.tripathi\Desktop\result.xls') 
       
         rb = xlrd.open_workbook('result.xls')
         sheet = rb.sheet_by_index(0) 
@@ -77,32 +75,30 @@ def save_data(no_of_time_hand_detected, no_of_time_hand_crossed):
         
 if __name__ == '__main__':
     # Detection confidence threshold to draw bounding box
-    score_thresh = 0.80                         ## If the detection accuracy is more than 80% only in that case it'll show you the bounding boxes.
+    score_thresh = 0.80                        
     
     #vs = cv2.VideoCapture('rtsp://192.168.1.64')
-    vs = VideoStream(0).start()                 ## It will start the videostream from port 0.
+    vs = VideoStream(0).start()                 
     #Oriendtation of machine    
     Orientation= 'bt'
 	#input("Enter the orientation of hand progression ~ lr,rl,bt,tb :")
 
     #For Machine
-    #Line_Perc1=float(input("Enter the percent of screen for the line of machine :"))
     Line_Perc1=float(15)
 
     #For Safety
-    #Line_Perc2=float(input("Enter the percent of screen for the line of safety :"))
     Line_Perc2=float(30)
 
     # max number of hands we want to detect/track
     num_hands_detect = 2
 
     # Used to calculate fps
-    start_time = datetime.datetime.now()               ## To keep the information of when person hand has crossed the line.
+    start_time = datetime.datetime.now()              
     num_frames = 0
 
     im_height, im_width = (None, None)
-    cv2.namedWindow('Detection', cv2.WINDOW_NORMAL)     ## Creating the screen that will pop up.
-    def count_no_of_times(lst):                         ## Count no. of times we are passing the frames.
+    cv2.namedWindow('Detection', cv2.WINDOW_NORMAL)     
+    def count_no_of_times(lst):                         
         x=y=cnt=0
         for i in lst:
             x=y
@@ -112,11 +108,11 @@ if __name__ == '__main__':
         return cnt 
     try:
         while True:
-            frame = vs.read()                 ## From vedio we will keep on reading the frame one by one.
-            frame = np.array(frame)           ## Convert that frame into array.
+            frame = vs.read()                 
+            frame = np.array(frame)          
             #frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         
-            if im_height == None:             ## im_height == None means if there is no frame.
+            if im_height == None:             
                 im_height, im_width = frame.shape[:2]
 
             # Convert image to rgb since opencv loads images in bgr, if not accuracy will decrease
@@ -128,13 +124,11 @@ if __name__ == '__main__':
             
             #cv2.line(img=frame, pt1=(0, Line_Position2), pt2=(frame.shape[1], Line_Position2), color=(255, 0, 0), thickness=2, lineType=8, shift=0)
 
-            ## From video streaming we will get a frame and then we will pass this frame to the model.
 
             # Run image through tensorflow graph
-            ## This is the function which is responsible for doing detection out of that particular graph.
+
             boxes, scores, classes = detector_utils.detect_objects(
-                frame, detection_graph, sess)                        ## We are passing the session bcoz in tensorflow 1.x we are supposed to call everything inside the session . Everything should happen inside the same session , we aren't supposed to create another session.
-            
+                frame, detection_graph, sess)                       
             Line_Position2=orien_lines.drawsafelines(frame,Orientation,Line_Perc1,Line_Perc2)             
             # Draw bounding boxeses and text
             a,b=detector_utils.draw_box_on_image(
