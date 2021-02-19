@@ -14,7 +14,7 @@ detection_graph = tf.Graph()
 
 TRAINED_MODEL_DIR = 'frozen_graphs'
 # Path to frozen detection graph. This is the actual model that is used for the object detection.
-PATH_TO_CKPT = TRAINED_MODEL_DIR + '/ssd5_optimized_inference_graph.pb'             ## This is the model that we are trying to load.
+PATH_TO_CKPT = TRAINED_MODEL_DIR + '/ssd5_optimized_inference_graph.pb'            
 # List of the strings that is used to add correct label for each box.
 PATH_TO_LABELS = TRAINED_MODEL_DIR + '/Glove_label_map.pbtxt'
 
@@ -28,11 +28,7 @@ category_index = label_map_util.create_category_index(categories)
 a=b=0
 
 # Load a frozen infrerence graph into memory
-## Graph means model
 
-## Flow :
-## We are trying to load the model. We will keep on psssing the video feed inside that. Once we will be able to get the
-## response in the form of coordinates, we just have to show the response on the video screen.
 
 def load_inference_graph():
 
@@ -40,12 +36,11 @@ def load_inference_graph():
     
     print("> ====== Loading frozen graph into memory")
     detection_graph = tf.Graph()
-    with detection_graph.as_default():                          ## We are calling the default method.
+    with detection_graph.as_default():                          
         od_graph_def = tf.GraphDef()
         with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
-            serialized_graph = fid.read()                          ## We are trying to read the model file.
-            od_graph_def.ParseFromString(serialized_graph)         ## Then are trying to serialize the graph which means we are reading this binary file and then we are converting this into system readable or neural network based graph.
-            tf.import_graph_def(od_graph_def, name='')
+            serialized_graph = fid.read()                         
+            od_graph_def.ParseFromString(serialized_graph)        
         sess = tf.Session(graph=detection_graph)
     print(">  ====== Inference graph loaded.")
     return detection_graph, sess
@@ -129,7 +124,7 @@ def distance_to_camera(knownWidth, focalLength, pixelWidth):
 # Actual detection .. generate scores and bounding boxes given an image
 def detect_objects(image_np, detection_graph, sess):
     # Definite input and output Tensors for detection_graph
-    image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')               ## It will convert image into tensors.
+    image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')              
     # Each box represents a part of the image where a particular object was detected.
     detection_boxes = detection_graph.get_tensor_by_name(
         'detection_boxes:0')
@@ -142,7 +137,7 @@ def detect_objects(image_np, detection_graph, sess):
     num_detections = detection_graph.get_tensor_by_name(
         'num_detections:0')
 
-    image_np_expanded = np.expand_dims(image_np, axis=0)             ## Since it is the preprocessing stage of any image, we ahve to expand the dimensions.
+    image_np_expanded = np.expand_dims(image_np, axis=0)            
 
     (boxes, scores, classes, num) = sess.run(
         [detection_boxes, detection_scores,
